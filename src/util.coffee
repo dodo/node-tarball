@@ -9,6 +9,24 @@ getTime = (d) ->
         return date
 
 
+class UnbufferedStream extends Stream
+    constructor: (source) ->
+        super
+        @closed = no
+        {@props, @root, @path} = source
+        source.once 'end', =>
+        @once 'accepted', ->
+            source.emit('accepted')
+        source.pipe(this)
+
+    end: ->
+        @emit 'full'
+        process.nextTick =>
+            @emit 'end'
+            @closed = yes
+
+    resume: -> # stub
+    pause: -> # stub
 
 ## this is just needed to please tar
 # Emit a whole file at once
@@ -16,6 +34,7 @@ class BufferedStream extends Stream
 
     constructor: (source) ->
         super
+        @closed = no
         @buffer = new PostBuffer source
         {@props, @root, @path} = source
         @buffer.onEnd (data) =>
@@ -29,6 +48,7 @@ class BufferedStream extends Stream
     flush: (body) ->
         @emit 'data', body
         process.nextTick =>
+            @closed = yes
             @emit 'end'
 
     resume: -> # stub
@@ -36,6 +56,7 @@ class BufferedStream extends Stream
 
 
 module.exports = {
+    UnbufferedStream
     BufferedStream
     getTime
 }

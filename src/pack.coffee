@@ -1,8 +1,7 @@
 { EventEmitter } = require 'events'
 zlib = require 'zlib'
 tar = require 'tar'
-ValveStream = require 'valvestream'
-{ getTime, BufferedStream } = require './util'
+{ getTime, BufferedStream, UnbufferedStream } = require './util'
 
 
 DEFAULTS =
@@ -36,7 +35,8 @@ class Pack extends EventEmitter
         super
 
     onDrain: () =>
-        return if @current?.flushed
+        return unless @current?
+        return if @current.flushed
         @current?.flushed = yes
         @flush()
 
@@ -101,17 +101,13 @@ class Pack extends EventEmitter
                 source.props.size = undefined
 
         # autofill size by buffering all
-        if source.props.size? and off
-            stream = new ValveStream
-            (-> {@props, @root, @path} = source).call(stream)
-            done =  ->
-                source.pipe(stream)
+        if source.props.size? and off # FIXME unbuffered doesnt work quite well :/
+            stream = new UnbufferedStream(source)
         else
             # No length means we cannot pipe(). tar.Pack
             # needs to know a file's size beforehand though, so we
             # need to buffer the content.
             stream = new BufferedStream(source)
-            done =  ->
 
         time = getTime(stream.time)
         stream.props.mtime ?= getTime(stream.props.mtime) ? time
@@ -120,8 +116,6 @@ class Pack extends EventEmitter
 
         stream.props.path ?= stream.path
         (stream.root ?= {}).path = "."
-
-#         done()
 
         return stream
 
