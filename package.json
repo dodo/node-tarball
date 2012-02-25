@@ -10,7 +10,7 @@
 , "scripts": {
     "prepublish": "cake build"}
 , "dependencies": {
-    "bufferstream": "0.5.0-pre2",
+    "bufferstream": ">= 0.5.0",
     "tar": "0.1.12"}
 , "devDependencies": {
     "muffin": ">= 0.2.6",
