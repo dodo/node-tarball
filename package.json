@@ -1,6 +1,6 @@
 { "name": "tarball"
 , "description": "creates tarballs with streams"
-, "version": "0.0.2"
+, "version": "0.0.3"
 , "homepage": "https://github.com/dodo/node-tarball"
 , "author": "dodo (https://github.com/dodo)"
 , "repository": {"type": "git", "url": "git://github.com/dodo/node-tarball.git"}
