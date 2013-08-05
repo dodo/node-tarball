@@ -14,5 +14,5 @@
     "tar": "0.1.12"}
 , "devDependencies": {
     "muffin": ">= 0.2.6",
-    "coffee-script": ">= 1.1.2"}
+    "coffee-script": ">= 1.6.3"}
 }

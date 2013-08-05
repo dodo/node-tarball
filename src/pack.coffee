@@ -5,7 +5,7 @@ tar = require 'tar'
 
 
 DEFAULTS =
-    mode:  0755
+    mode:  0o0755
     uid:   1000
     gid:   1000
     uname: 'nouser'
