@@ -1,10 +1,10 @@
 { Stream } = require 'stream'
 PostBuffer = require 'bufferstream/postbuffer'
 
-getTime = (d) ->
-    date = new Date(d or new Date).getTime() / 1000
+getTime = (date) ->
+    date = new Date(date).getTime() / 1000
     if isNaN(date)
-        return new Date().getTime() / 1000
+        return Date.now() / 1000
     else
         return date
 
