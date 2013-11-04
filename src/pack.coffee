@@ -10,6 +10,7 @@ DEFAULTS =
     gid:   1000
     uname: 'nouser'
     gname: 'nogroup'
+    type:  'File'
 
 
 class Pack extends EventEmitter
