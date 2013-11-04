@@ -36,32 +36,31 @@ class Pack extends EventEmitter
 
     onDrain: () =>
         return unless @current?
-        return if @current.flushed
-        @current?.flushed = yes
-        @flush()
+        @current.drained = yes
+        @current.flushed = yes
+        process.nextTick(@flush)
 
     onPipe: (source) =>
         if @idle
             @idle = no
-            @current = @check(source)
-            @current.once 'full', =>
+            @current = @check(source).once 'full', =>
                 @current.flushed = @pack.add(@current)
-                if @current.flushed
+                if @current.flushed and not @current.drained
                     process.nextTick(@flush)
         else
             source.pause()
             @pending.push(source)
 
     flush: () =>
+        return if @current? and not @current.flushed
         old = @current
         next = @pending.shift()
         if next?
             @idle = no
-            @current = @check(next)
-            @current.once 'full', =>
+            @current = @check(next).once 'full', =>
                 @current.flushed = @pack.add(@current)
                 @current.resume() unless @current.flushed
-                if @current.flushed
+                if @current.flushed and not @current.drained
                     process.nextTick(@flush)
         else
             @current = null
